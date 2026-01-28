@@ -2,7 +2,7 @@ import { Pause, Square } from 'lucide-react';
 
 export function TimeTracker() {
     return (
-        <div className="rounded-2xl overflow-hidden h-48 relative">
+        <div className="rounded-2xl overflow-hidden h-full w-full relative">
             {/* Abstract wavy background */}
             <div className="absolute inset-0 bg-emerald-950">
                 <svg

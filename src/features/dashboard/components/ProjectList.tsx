@@ -9,7 +9,7 @@ interface ProjectListProps {
 
 export function ProjectList({ projects = [] }: ProjectListProps) {
     // Helper to get icon based on project title or category (simple mapping for demo)
-    const getProjectIcon = (title: string, index: number) => {
+    const getProjectIcon = (index: number) => {
         const icons = [Share2, RotateCcw, Palette, Zap, Bug, FileText];
         const colors = ['bg-blue-500', 'bg-teal-500', 'bg-orange-500', 'bg-yellow-500', 'bg-purple-500', 'bg-pink-500'];
         return {
@@ -22,7 +22,7 @@ export function ProjectList({ projects = [] }: ProjectListProps) {
     const displayProjects = projects.slice(0, 5);
 
     return (
-        <div className="glass-card rounded-2xl p-5 border">
+        <div className="glass-card rounded-2xl p-5 border h-full w-full flex flex-col">
             <div className="flex justify-between items-center mb-5">
                 <h3 className="text-base font-semibold">Project</h3>
                 <button className="text-xs px-3 py-1.5 border border-border rounded-lg hover:bg-accent transition-smooth">
@@ -30,9 +30,9 @@ export function ProjectList({ projects = [] }: ProjectListProps) {
                 </button>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-3 flex-1 overflow-y-auto">
                 {displayProjects.map((project, idx) => {
-                    const { Icon, bg } = getProjectIcon(project.title, idx);
+                    const { Icon, bg } = getProjectIcon(idx);
                     return (
                         <div key={project.id} className="flex items-center gap-3 group cursor-pointer">
                             <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center text-white", bg)}>

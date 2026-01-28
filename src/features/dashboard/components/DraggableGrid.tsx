@@ -313,7 +313,7 @@ export default function DraggableGrid({ data, isEditMode }: any) {
                 layouts={processedLayouts}
                 breakpoints={breakpoints}
                 cols={cols}
-                rowHeight={30}
+                rowHeight={20}
                 draggableHandle=".grid-drag-handle"
                 isDraggable={isEditMode}
                 isResizable={isEditMode}

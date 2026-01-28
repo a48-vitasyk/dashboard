@@ -2,7 +2,7 @@ import { Video } from 'lucide-react';
 
 export function Reminders() {
     return (
-        <div className="glass-card rounded-2xl p-6 border flex flex-col justify-between">
+        <div className="glass-card rounded-2xl p-6 border h-full w-full flex flex-col justify-between">
             <div>
                 <h3 className="text-sm font-medium text-muted-foreground mb-4">Reminders</h3>
                 <h4 className="text-lg font-semibold mb-1">Meeting with Arc Company</h4>

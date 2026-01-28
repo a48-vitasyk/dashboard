@@ -32,7 +32,7 @@ export function CalendarWidget() {
                 ))}
             </div>
 
-            <div className="grid grid-cols-7 gap-1 flex-1">
+            <div className="grid grid-cols-7 gap-1 flex-1 auto-rows-fr content-start">
                 {/* Empty slots for start of month offset */}
                 <div />
                 <div />
@@ -41,7 +41,7 @@ export function CalendarWidget() {
                     <div
                         key={day}
                         className={cn(
-                            "flex items-center justify-center text-xs rounded-md aspect-square hover:bg-accent cursor-pointer transition-colors",
+                            "flex items-center justify-center text-xs rounded-md hover:bg-accent cursor-pointer transition-colors min-h-[24px]",
                             day === currentDay && "bg-emerald-600 text-white font-bold hover:bg-emerald-700"
                         )}
                     >
