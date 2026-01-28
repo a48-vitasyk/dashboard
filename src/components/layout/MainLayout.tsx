@@ -13,7 +13,7 @@ export function MainLayout({ children }: MainLayoutProps) {
     const { isOpen } = useSidebarStore();
 
     return (
-        <div className="min-h-screen bg-gray-50/40 dark:bg-slate-950 transition-colors duration-300">
+        <div className="min-h-screen bg-gray-200 dark:bg-slate-950 transition-colors duration-300">
             <Sidebar />
 
             <div
