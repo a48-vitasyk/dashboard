@@ -60,17 +60,47 @@ export default function DraggableGrid({ data, isEditMode }: any) {
             Object.keys(layouts).forEach((breakpoint) => {
                 const currentLayout = layouts[breakpoint];
                 if (Array.isArray(currentLayout)) {
-                    result[breakpoint] = currentLayout.map((item: any) => ({
-                        ...item,
-                        static: !isEditMode,
-                        isDraggable: isEditMode,
-                        isResizable: isEditMode,
-                    }));
+                    result[breakpoint] = currentLayout.map((item: any) => {
+                        // Find widget to get type for constraints
+                        const widget = widgets?.find(w => w.id === item.i);
+                        const widgetType = widget?.type || '';
+
+                        // Set min/max constraints based on widget type
+                        // Default template: minW = 2, minH = 4
+                        let minW = 2, maxW = 12, minH = 4, maxH = 20;
+
+                        if (widgetType === 'calendar') {
+                            minW = 2; minH = 4; maxH = 12;
+                        } else if (widgetType === 'analytics') {
+                            minW = 4; minH = 6; maxW = 12;
+                        } else if (widgetType === 'gauge') {
+                            minW = 2; minH = 4; maxW = 6; maxH = 10;
+                        } else if (widgetType === 'project-list') {
+                            minW = 2; minH = 4; maxW = 6;
+                        } else if (widgetType === 'time-tracker') {
+                            minW = 2; minH = 4; maxW = 6; maxH = 10;
+                        } else if (widgetType === 'reminders') {
+                            minW = 2; minH = 4; maxW = 6; maxH = 10;
+                        } else if (widgetType.startsWith('stat-')) {
+                            minW = 2; minH = 3; maxW = 4; maxH = 6;
+                        }
+
+                        return {
+                            ...item,
+                            static: !isEditMode,
+                            isDraggable: isEditMode,
+                            isResizable: isEditMode,
+                            minW,
+                            maxW,
+                            minH,
+                            maxH,
+                        };
+                    });
                 }
             });
         }
         return result;
-    }, [layouts, isEditMode]);
+    }, [layouts, isEditMode, widgets]);
 
     // Global dragover prevention - NO stopPropagation
     useEffect(() => {
@@ -288,6 +318,15 @@ export default function DraggableGrid({ data, isEditMode }: any) {
                             <GripVertical className="w-4 h-4" />
                         </div>
                     </div>
+                    {/* Resize Handle Indicator */}
+                    <div
+                        className="react-resizable-handle react-resizable-handle-se absolute bottom-2 right-2 w-4 h-4 opacity-40 hover:opacity-100 transition-opacity pointer-events-none"
+                        style={{
+                            cursor: 'se-resize',
+                            background: 'linear-gradient(135deg, transparent 50%, currentColor 50%)',
+                            color: '#10b981'
+                        }}
+                    />
                 </>
             )}
             {children}
@@ -317,6 +356,7 @@ export default function DraggableGrid({ data, isEditMode }: any) {
                 draggableHandle=".grid-drag-handle"
                 isDraggable={isEditMode}
                 isResizable={isEditMode}
+                resizeHandles={['se']}
                 isDroppable={true}
                 compactType={null}
                 preventCollision={true}
