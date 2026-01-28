@@ -1,0 +1,58 @@
+import { cn } from '@/lib/utils';
+import { ProjectRow } from '@/services/db/types_db';
+// Map categories/titles to icons or just use generic ones for now dynamic
+import { Share2, RotateCcw, Palette, Zap, Bug, FileText } from 'lucide-react';
+
+interface ProjectListProps {
+    projects?: ProjectRow[];
+}
+
+export function ProjectList({ projects = [] }: ProjectListProps) {
+    // Helper to get icon based on project title or category (simple mapping for demo)
+    const getProjectIcon = (title: string, index: number) => {
+        const icons = [Share2, RotateCcw, Palette, Zap, Bug, FileText];
+        const colors = ['bg-blue-500', 'bg-teal-500', 'bg-orange-500', 'bg-yellow-500', 'bg-purple-500', 'bg-pink-500'];
+        return {
+            Icon: icons[index % icons.length],
+            bg: colors[index % colors.length]
+        };
+    };
+
+    // Limit to 5 projects for the widget view
+    const displayProjects = projects.slice(0, 5);
+
+    return (
+        <div className="glass-card rounded-2xl p-5 border">
+            <div className="flex justify-between items-center mb-5">
+                <h3 className="text-base font-semibold">Project</h3>
+                <button className="text-xs px-3 py-1.5 border border-border rounded-lg hover:bg-accent transition-smooth">
+                    + New
+                </button>
+            </div>
+
+            <div className="space-y-3">
+                {displayProjects.map((project, idx) => {
+                    const { Icon, bg } = getProjectIcon(project.title, idx);
+                    return (
+                        <div key={project.id} className="flex items-center gap-3 group cursor-pointer">
+                            <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center text-white", bg)}>
+                                <Icon className="w-4 h-4" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium group-hover:text-emerald-700 transition-smooth truncate">
+                                    {project.title}
+                                </p>
+                                <p className="text-[11px] text-muted-foreground">
+                                    Due date: {new Date(project.due_date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                </p>
+                            </div>
+                        </div>
+                    );
+                })}
+                {displayProjects.length === 0 && (
+                    <p className="text-xs text-muted-foreground text-center py-4">No active projects</p>
+                )}
+            </div>
+        </div>
+    );
+}
