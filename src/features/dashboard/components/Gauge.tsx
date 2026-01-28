@@ -19,8 +19,8 @@ export function Gauge({
     // This creates the effect of rounded segments overlapping each other correctly.
 
     const size = 200;
-    const strokeWidth = 34;
-    const radius = 65;
+    const strokeWidth = 28;
+    const radius = 84;
     const c = size / 2;
 
     const total = 100; // Assume 100% total for simplicity in logic
