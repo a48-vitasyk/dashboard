@@ -22,14 +22,16 @@ export function ProjectList({ projects = [] }: ProjectListProps) {
     const displayProjects = projects.slice(0, 5);
 
     return (
-        <div className="glass-card rounded-2xl p-5 border h-full w-full flex flex-col">
-            <div className="flex justify-between items-center mb-5">
+        <div className="w-full h-full flex flex-col gap-4 p-5 overflow-hidden">
+            {/* Header */}
+            <div className="flex justify-between items-center shrink-0">
                 <h3 className="text-base font-semibold">Project</h3>
                 <button className="text-xs px-3 py-1.5 border border-border rounded-lg hover:bg-accent transition-smooth">
                     + New
                 </button>
             </div>
 
+            {/* Project List */}
             <div className="space-y-3 flex-1 overflow-y-auto">
                 {displayProjects.map((project, idx) => {
                     const { Icon, bg } = getProjectIcon(idx);

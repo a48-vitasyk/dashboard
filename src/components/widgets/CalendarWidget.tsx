@@ -17,21 +17,24 @@ export function CalendarWidget() {
     };
 
     return (
-        <div className="h-full flex flex-col p-4">
-            <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-sm">January 2026</h3>
+        <div className="w-full h-full flex flex-col gap-4 p-5 overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between shrink-0">
+                <h3 className="text-base font-semibold">January 2026</h3>
                 <div className="flex gap-1">
                     <button className="p-1 hover:bg-accent rounded-md"><ChevronLeft className="w-4 h-4" /></button>
                     <button className="p-1 hover:bg-accent rounded-md"><ChevronRight className="w-4 h-4" /></button>
                 </div>
             </div>
 
-            <div className="grid grid-cols-7 gap-1 mb-2 text-center">
+            {/* Day Headers */}
+            <div className="grid grid-cols-7 gap-1 text-center shrink-0">
                 {days.map(day => (
                     <div key={day} className="text-[10px] text-muted-foreground font-medium uppercase">{day}</div>
                 ))}
             </div>
 
+            {/* Calendar Grid */}
             <div className="grid grid-cols-7 gap-1 flex-1 auto-rows-fr content-start">
                 {/* Empty slots for start of month offset */}
                 <div />
@@ -50,7 +53,8 @@ export function CalendarWidget() {
                 ))}
             </div>
 
-            <div className="mt-4 pt-3 border-t border-border flex items-center justify-between">
+            {/* Footer */}
+            <div className="shrink-0 pt-3 border-t border-border flex items-center justify-between">
                 <div className="flex -space-x-2">
                     {[1, 2, 3].map(i => (
                         <div key={i} className={`w-6 h-6 rounded-full border-2 border-background bg-emerald-${i * 100 + 400}`} />
