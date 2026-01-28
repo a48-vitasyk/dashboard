@@ -28,28 +28,48 @@ const TotalProjectsWidget = ({ stats }: any) => (
 
 const AnalyticsWidget = () => (
     <div className="p-6 h-full flex flex-col">
-        <h3 className="text-base font-semibold mb-4">Project Analytics</h3>
-        <div className="flex items-end justify-between flex-1 gap-2">
+        <h3 className="text-base font-semibold mb-8">Project Analytics</h3>
+        <div className="flex items-end justify-between flex-1 gap-3">
             {[
                 { day: 'S', height: '60%', type: 'striped' },
-                { day: 'M', height: '85%', type: 'solid' },
-                { day: 'T', height: '75%', type: 'solid-light' },
-                { day: 'W', height: '100%', type: 'solid' },
-                { day: 'T', height: '65%', type: 'striped' },
-                { day: 'F', height: '60%', type: 'striped' },
+                { day: 'M', height: '85%', type: 'solid-medium' },
+                { day: 'T', height: '75%', type: 'active', label: '74%' },
+                { day: 'W', height: '100%', type: 'solid-dark' },
+                { day: 'T', height: '85%', type: 'striped' },
+                { day: 'F', height: '65%', type: 'striped' },
                 { day: 'S', height: '70%', type: 'striped' },
             ].map((item, idx) => (
-                <div key={idx} className="flex flex-col items-center flex-1 h-full justify-end">
-                    <div
-                        className={cn(
-                            'w-full rounded-t-[20px] transition-all duration-300',
-                            item.type === 'striped' && 'bg-striped',
-                            item.type === 'solid' && 'bg-emerald-800 dark:bg-emerald-700',
-                            item.type === 'solid-light' && 'bg-emerald-600 dark:bg-emerald-500'
+                <div key={idx} className="flex flex-col items-center flex-1 h-full justify-end group clickable relative">
+
+                    {/* Active Label Popup */}
+                    {item.type === 'active' && (
+                        <div className="absolute -top-10 flex flex-col items-center z-10 animate-in fade-in zoom-in duration-300">
+                            <div className="bg-[#ECFDF5] text-[#047857] text-[10px] font-bold px-2 py-1 rounded-[6px] border border-[#A7F3D0] shadow-sm mb-1 relative">
+                                {item.label}
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="relative w-full flex items-end justify-center" style={{ height: item.height }}>
+
+                        {/* The Bar */}
+                        <div
+                            className={cn(
+                                'w-full h-full rounded-full transition-all duration-300',
+                                item.type === 'striped' && 'bg-striped',
+                                item.type === 'solid-medium' && 'bg-[#15803d]', // green-700
+                                item.type === 'solid-dark' && 'bg-[#064e3b]', // green-900
+                                item.type === 'active' && 'bg-[#34d399]' // emerald-400
+                            )}
+                        ></div>
+
+                        {/* Active Ring Indicator */}
+                        {item.type === 'active' && (
+                            <div className="absolute -top-[5px] w-3 h-3 bg-white border-[2.5px] border-[#34d399] rounded-full z-20"></div>
                         )}
-                        style={{ height: item.height }}
-                    ></div>
-                    <span className="text-[11px] font-medium mt-2 text-muted-foreground">{item.day}</span>
+                    </div>
+
+                    <span className="text-[11px] font-medium mt-3 text-gray-400">{item.day}</span>
                 </div>
             ))}
         </div>

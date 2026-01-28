@@ -11,27 +11,29 @@ export function Gauge({
     inProgress = 35,
     pending = 24,
 }: GaugeProps) {
+    // Technique: Overlapping Arcs (Stacking) from furthest to nearest
+    // Layer 1 (Bottom): Total (Pending + InProgress + Completed) -> Striped
+    // Layer 2 (Middle): InProgress + Completed -> Dark Green
+    // Layer 3 (Top): Completed -> Light Green
+
+    // This creates the effect of rounded segments overlapping each other correctly.
+
     const size = 200;
-    const strokeWidth = 34; // Chunkier stroke
-    const radius = 65; // Reduced radius to fit stroke
+    const strokeWidth = 34;
+    const radius = 65;
     const c = size / 2;
 
-    // 1. Calculate angles
-    const total = completed + inProgress + pending;
-    const totalDegrees = 180;
-    const gap = 2; // Slightly larger gap
+    const total = 100; // Assume 100% total for simplicity in logic
+    const totalDeg = 180;
 
-    const deg1 = (completed / total) * totalDegrees;
-    const deg2 = (inProgress / total) * totalDegrees;
-    // const deg3 = (pending / total) * totalDegrees; // Unused
+    const degCompleted = (completed / total) * totalDeg;
+    const degInProgress = (inProgress / total) * totalDeg;
+    const degPending = (pending / total) * totalDeg;
 
-    // Start angles (Clockwise from 180)
-    const start1 = 180;
-    const end1 = start1 + deg1 - gap;
-    const start2 = end1 + gap;
-    const end2 = start2 + deg2 - gap;
-    const start3 = end2 + gap;
-    const end3 = 360;
+    // We draw from 180 (left) to 360 (right)
+    const arcTotal = 180 + degCompleted + degInProgress + degPending; // Should be around 360 if adds to 100
+    const arcInProgress = 180 + degCompleted + degInProgress;
+    const arcCompleted = 180 + degCompleted;
 
     const getPoint = (deg: number) => {
         const rad = (deg * Math.PI) / 180;
@@ -49,20 +51,20 @@ export function Gauge({
         return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArc} 1 ${end.x} ${end.y}`;
     };
 
-    // Custom Motion Path component to handle drawing animation
-    const Segment = ({ d, stroke, delay = 0 }: any) => (
+    const Segment = ({ endDeg, stroke, delay = 0, id }: any) => (
         <motion.path
-            d={d}
+            d={makeArc(180, endDeg)}
             fill="none"
             stroke={stroke}
             strokeWidth={strokeWidth}
-            strokeLinecap="butt"
+            strokeLinecap="round" // Critical for the rounded look
             initial={{ pathLength: 0, opacity: 0 }}
             animate={{ pathLength: 1, opacity: 1 }}
             transition={{
-                pathLength: { duration: 0.8, ease: "circOut", delay },
+                pathLength: { duration: 1.2, ease: "circOut", delay },
                 opacity: { duration: 0.2, delay }
             }}
+            style={{ zIndex: id }} // Ensure stacking order if needed
         />
     );
 
@@ -76,72 +78,44 @@ export function Gauge({
                 >
                     <defs>
                         <pattern
-                            id="patternStripes"
+                            id="gaugeStripes"
                             patternUnits="userSpaceOnUse"
-                            width="6"
-                            height="6"
+                            width="8"
+                            height="8"
                             patternTransform="rotate(45)"
                         >
-                            <rect width="6" height="6" fill="#fff" />
-                            <line x1="0" y1="0" x2="0" y2="6" stroke="#9ca3af" strokeWidth="3" />
+                            <rect width="8" height="8" fill="transparent" />
+                            <line x1="0" y1="0" x2="0" y2="8" stroke="#9ca3af" strokeWidth="3" />
                         </pattern>
                     </defs>
 
-                    {/* Track Background - Fade In */}
-                    <motion.path
+                    {/* Track Background - Faint Gray */}
+                    {/* <motion.path
                         d={makeArc(180, 360)}
                         fill="none"
-                        stroke="#e5e7eb"
+                        stroke="#f9fafb"
                         strokeWidth={strokeWidth}
                         strokeLinecap="round"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.5 }}
-                    />
+                    /> */}
 
-                    {/* Segment 1: Completed (Green 700) */}
-                    <Segment d={makeArc(start1, end1)} stroke="#15803d" delay={0.2} />
+                    {/* Layer 1: Pending (The Base - Longest) - Striped */}
+                    {/* Draws full length, so the end tip is visible as 'Pending' */}
+                    <Segment endDeg={arcTotal} stroke="url(#gaugeStripes)" delay={0.6} id={1} />
 
-                    {/* Start Cap - Scale In */}
-                    <motion.circle
-                        cx={getPoint(180).x} cy={getPoint(180).y} r={strokeWidth / 2} fill="#15803d"
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: 0.2, duration: 0.3 }}
-                    />
+                    {/* Layer 2: In Progress (Middle) - Dark Green */}
+                    {/* Covers the start of Pending, showing its own rounded end */}
+                    <Segment endDeg={arcInProgress} stroke="#064e3b" delay={0.4} id={2} />
 
-                    {/* Segment 2: In Progress (Emerald 900) */}
-                    <Segment d={makeArc(start2, end2)} stroke="#064e3b" delay={0.5} />
-
-                    {/* Segment 3: Pending (Striped) */}
-                    <Segment d={makeArc(start3, end3)} stroke="url(#patternStripes)" delay={0.8} />
-
-                    {/* End Cap - Scale In */}
-                    <motion.circle
-                        cx={getPoint(360).x} cy={getPoint(360).y} r={strokeWidth / 2} fill="#e5e7eb"
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: 0, duration: 0.3 }}
-                    />
-
-                    {/* Separators - Fade In */}
-                    <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}>
-                        <path
-                            d={`M ${c + (radius - 18) * Math.cos(end1 * Math.PI / 180)} ${c + (radius - 18) * Math.sin(end1 * Math.PI / 180)} L ${c + (radius + 18) * Math.cos(end1 * Math.PI / 180)} ${c + (radius + 18) * Math.sin(end1 * Math.PI / 180)}`}
-                            stroke="white" strokeWidth="2"
-                        />
-                        <path
-                            d={`M ${c + (radius - 18) * Math.cos(end2 * Math.PI / 180)} ${c + (radius - 18) * Math.sin(end2 * Math.PI / 180)} L ${c + (radius + 18) * Math.cos(end2 * Math.PI / 180)} ${c + (radius + 18) * Math.sin(end2 * Math.PI / 180)}`}
-                            stroke="white" strokeWidth="2"
-                        />
-                    </motion.g>
+                    {/* Layer 3: Completed (Top) - Light Green */}
+                    {/* Covers the start of In Progress */}
+                    <Segment endDeg={arcCompleted} stroke="#15803d" delay={0.2} id={3} />
 
                 </svg>
 
-                {/* Labels - Fade & Slide Up */}
-                <div className="absolute inset-x-0 bottom-0 flex flex-col items-center justify-end pb-[10%]">
+                {/* Labels */}
+                <div className="absolute inset-x-0 bottom-0 flex flex-col items-center justify-end pb-[5%]">
                     <motion.span
-                        className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground"
+                        className="text-4xl md:text-5xl font-bold text-foreground tracking-tight"
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 1, duration: 0.5 }}
@@ -149,7 +123,7 @@ export function Gauge({
                         {completed}%
                     </motion.span>
                     <motion.p
-                        className="text-[8px] md:text-[10px] text-muted-foreground font-medium"
+                        className="text-[10px] text-green-700/60 dark:text-green-400/60 font-semibold uppercase tracking-wide mt-1"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 1.2, duration: 0.5 }}
@@ -159,23 +133,23 @@ export function Gauge({
                 </div>
             </div>
 
-            {/* Legend - Staggered Fade */}
+            {/* Legend */}
             <motion.div
-                className="flex items-center gap-4 mt-2 text-[10px] text-muted-foreground font-medium"
+                className="flex items-center gap-5 mt-4 text-[11px] text-muted-foreground font-medium"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.4 }}
             >
-                <div className="flex items-center gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#15803d]" />
+                <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-[#15803d]" />
                     <span>Completed</span>
                 </div>
-                <div className="flex items-center gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-[#064e3b]" />
+                <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-[#064e3b]" />
                     <span>In Progress</span>
                 </div>
-                <div className="flex items-center gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full border border-dashed border-gray-400 bg-[url(#patternStripes)]" />
+                <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-[url(#gaugeStripes)] border border-gray-300 dark:border-gray-700" />
                     <span>Pending</span>
                 </div>
             </motion.div>
