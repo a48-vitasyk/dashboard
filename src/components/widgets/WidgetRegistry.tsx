@@ -127,20 +127,42 @@ const AnalyticsWidget = () => (
 
 const TeamWidget = ({ teamMembers }: any) => (
     <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
+        <motion.div
+            className="flex justify-between items-center mb-6"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+        >
             <h3 className="text-lg font-semibold">Team</h3>
             <button className="text-xs border px-2 py-1 rounded-full">+ Add</button>
-        </div>
+        </motion.div>
         <div className="space-y-4 overflow-y-auto h-[85%]">
-            {teamMembers.map((member: any) => (
-                <div key={member.id} className="flex items-center gap-3">
-                    <img src={member.avatar_url || `https://ui-avatars.com/api/?name=${member.name}`} className="w-8 h-8 rounded-full" />
+            {teamMembers.map((member: any, idx: number) => (
+                <motion.div
+                    key={member.id}
+                    className="flex items-center gap-3"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.1 + 0.2, duration: 0.4 }}
+                >
+                    <motion.img
+                        src={member.avatar_url || `https://ui-avatars.com/api/?name=${member.name}`}
+                        className="w-8 h-8 rounded-full"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: idx * 0.1 + 0.3, duration: 0.3, ease: "backOut" }}
+                    />
                     <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold truncate">{member.name}</p>
                         <p className="text[10px] text-muted-foreground truncate">{member.current_task}</p>
                     </div>
-                    <div className={cn("w-2 h-2 rounded-full", member.status === 'completed' ? 'bg-emerald-500' : member.status === 'in_progress' ? 'bg-orange-500' : 'bg-rose-500')} />
-                </div>
+                    <motion.div
+                        className={cn("w-2 h-2 rounded-full", member.status === 'completed' ? 'bg-emerald-500' : member.status === 'in_progress' ? 'bg-orange-500' : 'bg-rose-500')}
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: idx * 0.1 + 0.4, duration: 0.3, type: "spring" }}
+                    />
+                </motion.div>
             ))}
         </div>
     </div>
