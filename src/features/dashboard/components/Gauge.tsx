@@ -68,91 +68,87 @@ export function Gauge({
         />
     );
 
+
     return (
-        <div className="flex flex-col items-center w-full h-full justify-center">
-            <div className="relative w-full aspect-[200/120] max-w-[280px] overflow-hidden">
-                <svg
-                    viewBox="0 0 200 200"
-                    className="absolute top-0 left-0 w-full h-[166%]"
-                    preserveAspectRatio="xMidYMin meet"
-                >
-                    <defs>
-                        <pattern
-                            id="gaugeStripes"
-                            patternUnits="userSpaceOnUse"
-                            width="8"
-                            height="8"
-                            patternTransform="rotate(45)"
-                        >
-                            <rect width="8" height="8" fill="transparent" />
-                            <line x1="0" y1="0" x2="0" y2="8" stroke="#9ca3af" strokeWidth="3" />
-                        </pattern>
-                    </defs>
-
-                    {/* Track Background - Faint Gray */}
-                    {/* <motion.path
-                        d={makeArc(180, 360)}
-                        fill="none"
-                        stroke="#f9fafb"
-                        strokeWidth={strokeWidth}
-                        strokeLinecap="round"
-                    /> */}
-
-                    {/* Layer 1: Pending (The Base - Longest) - Striped */}
-                    {/* Draws full length, so the end tip is visible as 'Pending' */}
-                    <Segment endDeg={arcTotal} stroke="url(#gaugeStripes)" delay={0.6} id={1} />
-
-                    {/* Layer 2: In Progress (Middle) - Dark Green */}
-                    {/* Covers the start of Pending, showing its own rounded end */}
-                    <Segment endDeg={arcInProgress} stroke="#064e3b" delay={0.4} id={2} />
-
-                    {/* Layer 3: Completed (Top) - Light Green */}
-                    {/* Covers the start of In Progress */}
-                    <Segment endDeg={arcCompleted} stroke="#15803d" delay={0.2} id={3} />
-
-                </svg>
-
-                {/* Labels */}
-                <div className="absolute inset-x-0 bottom-0 flex flex-col items-center justify-end pb-[5%]">
-                    <motion.span
-                        className="text-4xl md:text-5xl font-bold text-foreground tracking-tight"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 1, duration: 0.5 }}
-                    >
-                        {completed}%
-                    </motion.span>
-                    <motion.p
-                        className="text-[10px] text-green-700/60 dark:text-green-400/60 font-semibold uppercase tracking-wide mt-1"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 1.2, duration: 0.5 }}
-                    >
-                        Project Ended
-                    </motion.p>
-                </div>
+        <div className="w-full h-full flex flex-col gap-4 p-5 overflow-hidden">
+            {/* Header */}
+            <div className="shrink-0">
+                <h3 className="text-base font-semibold">Project Progress</h3>
             </div>
 
-            {/* Legend */}
-            <motion.div
-                className="flex items-center gap-5 mt-4 text-[11px] text-muted-foreground font-medium"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.4 }}
-            >
-                <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-[#15803d]" />
-                    <span>Completed</span>
+            {/* Gauge Chart */}
+            <div className="flex-1 flex flex-col items-center justify-start min-h-0">
+                <div className="relative w-full aspect-[200/120] max-w-[200px] overflow-visible shrink-0">
+                    <svg
+                        viewBox="0 0 200 200"
+                        className="absolute top-0 left-0 w-full h-[166%]"
+                        preserveAspectRatio="xMidYMin meet"
+                    >
+                        <defs>
+                            <pattern
+                                id="gaugeStripes"
+                                patternUnits="userSpaceOnUse"
+                                width="8"
+                                height="8"
+                                patternTransform="rotate(45)"
+                            >
+                                <rect width="8" height="8" fill="transparent" />
+                                <line x1="0" y1="0" x2="0" y2="8" stroke="#9ca3af" strokeWidth="3" />
+                            </pattern>
+                        </defs>
+
+                        {/* Layer 1: Pending (The Base - Longest) - Striped */}
+                        <Segment endDeg={arcTotal} stroke="url(#gaugeStripes)" delay={0.6} id={1} />
+
+                        {/* Layer 2: In Progress (Middle) - Dark Green */}
+                        <Segment endDeg={arcInProgress} stroke="#064e3b" delay={0.4} id={2} />
+
+                        {/* Layer 3: Completed (Top) - Light Green */}
+                        <Segment endDeg={arcCompleted} stroke="#15803d" delay={0.2} id={3} />
+                    </svg>
+
+                    {/* Labels */}
+                    <div className="absolute inset-x-0 bottom-0 flex flex-col items-center justify-end pb-[5%]">
+                        <motion.span
+                            className="text-4xl md:text-5xl font-bold text-foreground tracking-tight"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 1, duration: 0.5 }}
+                        >
+                            {completed}%
+                        </motion.span>
+                        <motion.p
+                            className="text-[10px] text-green-700/60 dark:text-green-400/60 font-semibold uppercase tracking-wide mt-1"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 1.2, duration: 0.5 }}
+                        >
+                            Project Ended
+                        </motion.p>
+                    </div>
                 </div>
-                <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-[#064e3b]" />
-                    <span>In Progress</span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-[url(#gaugeStripes)] border border-gray-300 dark:border-gray-700" />
-                    <span>Pending</span>
-                </div>
-            </motion.div>
+
+                {/* Legend - Always visible */}
+                <motion.div
+                    className="flex items-center gap-4 mt-6 text-[11px] text-muted-foreground font-medium shrink-0"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1.4 }}
+                >
+                    <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-[#15803d]" />
+                        <span>Completed</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-[#064e3b]" />
+                        <span>In Progress</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-full bg-[url(#gaugeStripes)] border border-gray-300 dark:border-gray-700" />
+                        <span>Pending</span>
+                    </div>
+                </motion.div>
+            </div>
         </div>
     );
 }

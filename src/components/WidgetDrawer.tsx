@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Search, GripVertical, Calendar as CalendarIcon, BarChart3, Users, Clock, PieChart, CheckSquare, Activity } from 'lucide-react';
 import { useLayoutStore } from '@/stores/layout';
+import { cn } from '@/lib/utils';
 
 export function WidgetDrawer() {
     const { isWidgetDrawerOpen, setWidgetDrawerOpen } = useLayoutStore();
@@ -15,43 +16,11 @@ export function WidgetDrawer() {
     }, []);
 
     const availableWidgets = [
-        // Stat Cards
-        {
-            type: 'stat-total',
-            title: 'Total Projects',
-            icon: Activity,
-            size: '3x4',
-            description: 'Show total project count'
-        },
-        {
-            type: 'stat-ended',
-            title: 'Ended Projects',
-            icon: CheckSquare,
-            size: '3x4',
-            description: 'Completed projects'
-        },
-        {
-            type: 'stat-running',
-            title: 'Running Projects',
-            icon: Activity,
-            size: '3x4',
-            description: 'Active projects'
-        },
-        {
-            type: 'stat-pending',
-            title: 'Pending Projects',
-            icon: Clock,
-            size: '3x4',
-            description: 'Projects on hold'
-        },
-
-        // Main Widgets
         {
             type: 'calendar',
             title: 'Calendar',
             icon: CalendarIcon,
-            size: '5x6',
-            description: 'Monthly calendar view',
+            size: '4x4',
             preview: (
                 <div className="w-full h-20 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg p-2 border border-emerald-100 dark:border-emerald-900 flex flex-col items-center justify-center gap-1 mt-2">
                     <div className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400">Jan 2026</div>
@@ -63,48 +32,12 @@ export function WidgetDrawer() {
                 </div>
             )
         },
-        {
-            type: 'analytics',
-            title: 'Project Analytics',
-            icon: BarChart3,
-            size: '6x6',
-            description: 'Weekly activity chart'
-        },
-        {
-            type: 'reminders',
-            title: 'Reminders',
-            icon: Clock,
-            size: '4x5',
-            description: 'Upcoming meetings'
-        },
-        {
-            type: 'project-list',
-            title: 'Project List',
-            icon: CheckSquare,
-            size: '4x6',
-            description: 'Active project tasks'
-        },
-        {
-            type: 'team',
-            title: 'Team Collaboration',
-            icon: Users,
-            size: '6x8',
-            description: 'Team members & tasks'
-        },
-        {
-            type: 'gauge',
-            title: 'Project Progress',
-            icon: PieChart,
-            size: '4x5',
-            description: 'Overall completion'
-        },
-        {
-            type: 'time-tracker',
-            title: 'Time Tracker',
-            icon: Clock,
-            size: '4x5',
-            description: 'Active time tracking'
-        },
+        { type: 'analytics', title: 'Analytics', icon: BarChart3, size: '6x8', isPlaceholder: true },
+        { type: 'team', title: 'Team', icon: Users, size: '6x8', isPlaceholder: true },
+        { type: 'reminders', title: 'Reminders', icon: Clock, size: '3x6', isPlaceholder: true },
+        { type: 'gauge', title: 'Progress', icon: PieChart, size: '3x6', isPlaceholder: true },
+        { type: 'project-list', title: 'Projects', icon: CheckSquare, size: '3x9', isPlaceholder: true },
+        { type: 'stat-total', title: 'Total Stats', icon: Activity, size: '3x4', isPlaceholder: true },
     ];
 
     const filteredWidgets = availableWidgets.filter(w =>
@@ -189,23 +122,31 @@ export function WidgetDrawer() {
                                         key={widget.type}
                                         draggable={true}
                                         onDragStart={(e) => handleDragStart(e, widget.type)}
-                                        className="bg-card border rounded-xl p-3 cursor-grab active:cursor-grabbing hover:shadow-lg transition-all group flex flex-col gap-2 relative overflow-hidden h-40 border-border hover:border-emerald-500 hover:scale-[1.02]"
+                                        className={cn(
+                                            "bg-card border rounded-xl p-3 cursor-grab active:cursor-grabbing hover:shadow-lg transition-all group flex flex-col gap-2 relative overflow-hidden h-40",
+                                            widget.isPlaceholder
+                                                ? "border-dashed border-border hover:border-emerald-400 hover:bg-emerald-50/10"
+                                                : "border-border hover:border-emerald-500 hover:scale-[1.02]"
+                                        )}
                                     >
                                         <div className="flex items-center gap-2 mb-1">
-                                            <div className="p-1.5 rounded-md bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600">
+                                            <div className={cn(
+                                                "p-1.5 rounded-md",
+                                                widget.isPlaceholder ? "bg-muted" : "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600"
+                                            )}>
                                                 <widget.icon className="w-4 h-4" />
                                             </div>
                                             <span className="font-medium text-sm truncate">{widget.title}</span>
                                         </div>
 
                                         {/* Preview Area */}
-                                        <div className="flex-1 rounded border border-border/50 bg-background/50 flex items-center justify-center relative overflow-hidden px-2">
+                                        <div className="flex-1 rounded border border-border/50 bg-background/50 flex items-center justify-center relative overflow-hidden">
                                             {widget.preview ? (
                                                 widget.preview
                                             ) : (
-                                                <p className="text-[11px] text-muted-foreground text-center line-clamp-2">
-                                                    {widget.description || `${widget.size} grid units`}
-                                                </p>
+                                                <div className="text-[10px] text-muted-foreground font-mono opacity-50">
+                                                    {widget.size} Preview
+                                                </div>
                                             )}
                                         </div>
 

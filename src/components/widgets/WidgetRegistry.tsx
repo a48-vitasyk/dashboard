@@ -104,14 +104,11 @@ const GaugeWidget = ({ stats }: any) => {
     const valPend = Math.round(((stats?.gaugeStats.pending || 0) / realTotal) * 100);
 
     return (
-        <div className="p-4 flex flex-col items-center justify-center h-full">
-            <h3 className="text-sm font-semibold w-full text-left mb-2">Project Progress</h3>
-            <Gauge
-                completed={isNaN(valC) ? 0 : valC}
-                inProgress={isNaN(valP) ? 0 : valP}
-                pending={isNaN(valPend) ? 0 : valPend}
-            />
-        </div>
+        <Gauge
+            completed={isNaN(valC) ? 0 : valC}
+            inProgress={isNaN(valP) ? 0 : valP}
+            pending={isNaN(valPend) ? 0 : valPend}
+        />
     );
 }
 

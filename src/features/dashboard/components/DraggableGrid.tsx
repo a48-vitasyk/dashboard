@@ -331,11 +331,10 @@ export default function DraggableGrid({ data, isEditMode }: any) {
             >
                 {(widgets || []).map((widget) => {
                     let className = "";
+                    // Only keep special styling for stat cards
                     if (widget.type === 'stat-total') className = "bg-emerald-800 text-white border-0";
-                    if (widget.type === 'gauge') className = "p-4 items-center justify-center";
-                    if (widget.type === 'project-list' || widget.type === 'time-tracker' || widget.type === 'reminders') className = "p-0";
-                    if (widget.type === 'analytics' || widget.type === 'team') className = "p-6";
-                    if (widget.type === 'calendar') className = "p-0";
+                    // All other widgets use p-0 since they manage their own padding
+                    if (widget.type !== 'stat-total') className = "p-0";
 
                     return (
                         <div key={widget.id} style={{ pointerEvents: 'auto' }}>
