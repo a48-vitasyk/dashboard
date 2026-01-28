@@ -7,6 +7,7 @@ import { StatContent } from '@/features/dashboard/components/StatContent';
 import { TrendingUp, ArrowUpRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { WidgetType } from '@/stores/layout';
+import { motion } from 'framer-motion';
 
 // Inline components from DraggableGrid that we need to keep rendering
 // Ideally these would be separate files too, but putting here for now
@@ -17,18 +18,37 @@ const TotalProjectsWidget = ({ stats }: any) => (
             <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center"><ArrowUpRight className="w-4 h-4" /></div>
         </div>
         <div>
-            <p className="text-5xl font-bold mb-2">{stats?.total || 0}</p>
-            <div className="flex items-center gap-2 text-xs text-white/80">
+            <motion.p
+                className="text-5xl font-bold mb-2"
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, ease: "backOut" }}
+            >
+                {stats?.total || 0}
+            </motion.p>
+            <motion.div
+                className="flex items-center gap-2 text-xs text-white/80"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.4 }}
+            >
                 <div className="bg-white/20 rounded px-1.5 py-0.5 flex items-center gap-1"><TrendingUp className="w-3 h-3" /><span>5%</span></div>
                 <span>Increased</span>
-            </div>
+            </motion.div>
         </div>
     </div>
 );
 
 const AnalyticsWidget = () => (
     <div className="p-6 h-full flex flex-col">
-        <h3 className="text-base font-semibold mb-8">Project Analytics</h3>
+        <motion.h3
+            className="text-base font-semibold mb-8"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4 }}
+        >
+            Project Analytics
+        </motion.h3>
         <div className="flex items-end justify-between flex-1 gap-3">
             {[
                 { day: 'S', height: '60%', type: 'striped' },
@@ -39,18 +59,35 @@ const AnalyticsWidget = () => (
                 { day: 'F', height: '65%', type: 'striped' },
                 { day: 'S', height: '70%', type: 'striped' },
             ].map((item, idx) => (
-                <div key={idx} className="flex flex-col items-center flex-1 h-full justify-end group clickable relative">
+                <motion.div
+                    key={idx}
+                    className="flex flex-col items-center flex-1 h-full justify-end group clickable relative"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: idx * 0.1, duration: 0.3 }}
+                >
 
                     {/* Active Label Popup */}
                     {item.type === 'active' && (
-                        <div className="absolute -top-10 flex flex-col items-center z-10 animate-in fade-in zoom-in duration-300">
+                        <motion.div
+                            className="absolute -top-10 flex flex-col items-center z-10"
+                            initial={{ opacity: 0, y: 10, scale: 0.8 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            transition={{ delay: 0.8, duration: 0.4, ease: "backOut" }}
+                        >
                             <div className="bg-[#ECFDF5] text-[#047857] text-[10px] font-bold px-2 py-1 rounded-[6px] border border-[#A7F3D0] shadow-sm mb-1 relative">
                                 {item.label}
                             </div>
-                        </div>
+                        </motion.div>
                     )}
 
-                    <div className="relative w-full flex items-end justify-center" style={{ height: item.height }}>
+                    <motion.div
+                        className="relative w-full flex items-end justify-center"
+                        style={{ height: item.height, originY: 1 }}
+                        initial={{ scaleY: 0 }}
+                        animate={{ scaleY: 1 }}
+                        transition={{ delay: idx * 0.1 + 0.2, duration: 0.6, ease: "circOut" }}
+                    >
 
                         {/* The Bar */}
                         <div
@@ -65,12 +102,24 @@ const AnalyticsWidget = () => (
 
                         {/* Active Ring Indicator */}
                         {item.type === 'active' && (
-                            <div className="absolute -top-[5px] w-3 h-3 bg-white border-[2.5px] border-[#34d399] rounded-full z-20"></div>
+                            <motion.div
+                                className="absolute -top-[5px] w-3 h-3 bg-white border-[2.5px] border-[#34d399] rounded-full z-20"
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                transition={{ delay: 1, duration: 0.3, ease: "backOut" }}
+                            ></motion.div>
                         )}
-                    </div>
+                    </motion.div>
 
-                    <span className="text-[11px] font-medium mt-3 text-gray-400">{item.day}</span>
-                </div>
+                    <motion.span
+                        className="text-[11px] font-medium mt-3 text-gray-400"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: idx * 0.1 + 0.4, duration: 0.3 }}
+                    >
+                        {item.day}
+                    </motion.span>
+                </motion.div>
             ))}
         </div>
     </div>

@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils';
 import { ProjectRow } from '@/services/db/types_db';
 // Map categories/titles to icons or just use generic ones for now dynamic
 import { Share2, RotateCcw, Palette, Zap, Bug, FileText } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface ProjectListProps {
     projects?: ProjectRow[];
@@ -24,22 +25,38 @@ export function ProjectList({ projects = [] }: ProjectListProps) {
     return (
         <div className="w-full h-full flex flex-col gap-4 p-5 overflow-hidden">
             {/* Header */}
-            <div className="flex justify-between items-center shrink-0">
+            <motion.div
+                className="flex justify-between items-center shrink-0"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+            >
                 <h3 className="text-base font-semibold">Project</h3>
                 <button className="text-xs px-3 py-1.5 border border-border rounded-lg hover:bg-accent transition-smooth">
                     + New
                 </button>
-            </div>
+            </motion.div>
 
             {/* Project List */}
             <div className="space-y-3 flex-1 overflow-y-auto">
                 {displayProjects.map((project, idx) => {
                     const { Icon, bg } = getProjectIcon(idx);
                     return (
-                        <div key={project.id} className="flex items-center gap-3 group cursor-pointer">
-                            <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center text-white", bg)}>
+                        <motion.div
+                            key={project.id}
+                            className="flex items-center gap-3 group cursor-pointer"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: idx * 0.1 + 0.2, duration: 0.4 }}
+                        >
+                            <motion.div
+                                className={cn("w-9 h-9 rounded-xl flex items-center justify-center text-white", bg)}
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                transition={{ delay: idx * 0.1 + 0.3, duration: 0.3, ease: "backOut" }}
+                            >
                                 <Icon className="w-4 h-4" />
-                            </div>
+                            </motion.div>
                             <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium group-hover:text-emerald-700 transition-smooth truncate">
                                     {project.title}
@@ -48,7 +65,7 @@ export function ProjectList({ projects = [] }: ProjectListProps) {
                                     Due date: {new Date(project.due_date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
                                 </p>
                             </div>
-                        </div>
+                        </motion.div>
                     );
                 })}
                 {displayProjects.length === 0 && (
