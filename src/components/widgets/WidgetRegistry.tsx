@@ -4,6 +4,7 @@ import { ProjectList } from '@/features/dashboard/components/ProjectList';
 import { TimeTracker } from '@/features/dashboard/components/TimeTracker';
 import { Reminders } from '@/features/dashboard/components/Reminders';
 import { StatContent } from '@/features/dashboard/components/StatContent';
+import { TasksViewWidget } from '@/components/kanban/TasksViewWidget';
 import { TrendingUp, ArrowUpRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { WidgetType } from '@/stores/layout';
@@ -217,6 +218,8 @@ export function WidgetRegistry({ type, data }: WidgetRegistryProps) {
             return <ProjectList projects={projects} />;
         case 'time-tracker':
             return <TimeTracker />;
+        case 'kanban-board':
+            return <TasksViewWidget />;
         default:
             return <div>Unknown Widget Type: {type}</div>;
     }

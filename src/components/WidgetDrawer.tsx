@@ -34,6 +34,7 @@ export function WidgetDrawer() {
         },
         { type: 'analytics', title: 'Analytics', icon: BarChart3, size: '6x8', isPlaceholder: true },
         { type: 'team', title: 'Team', icon: Users, size: '6x8', isPlaceholder: true },
+        { type: 'kanban-board', title: 'Tasks Board', icon: CheckSquare, size: '10x8', isPlaceholder: true },
         { type: 'reminders', title: 'Reminders', icon: Clock, size: '3x6', isPlaceholder: true },
         { type: 'gauge', title: 'Progress', icon: PieChart, size: '3x6', isPlaceholder: true },
         { type: 'project-list', title: 'Projects', icon: CheckSquare, size: '3x9', isPlaceholder: true },

@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Dashboard } from '@/features/dashboard/Dashboard';
-import { TasksView } from '@/features/tasks/TasksView';
+import { TasksView } from '@/components/kanban/TasksView';
 import { useEffect } from 'react';
 import { useThemeStore } from '@/stores/theme';
 import { mockLogin } from '@/stores/auth';

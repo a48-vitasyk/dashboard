@@ -21,7 +21,7 @@ export interface LayoutItem {
     isResizable?: boolean;
 }
 
-export type WidgetType = 'stat-total' | 'stat-ended' | 'stat-running' | 'stat-pending' | 'analytics' | 'team' | 'reminders' | 'gauge' | 'project-list' | 'time-tracker' | 'calendar' | 'stats';
+export type WidgetType = 'stat-total' | 'stat-ended' | 'stat-running' | 'stat-pending' | 'analytics' | 'team' | 'reminders' | 'gauge' | 'project-list' | 'time-tracker' | 'calendar' | 'stats' | 'kanban-board';
 
 export interface Widget {
     id: string;

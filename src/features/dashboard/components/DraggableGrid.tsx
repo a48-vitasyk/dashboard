@@ -73,6 +73,8 @@ export default function DraggableGrid({ data, isEditMode }: any) {
                             minW = 2; minH = 4; maxH = 12;
                         } else if (widgetType === 'analytics') {
                             minW = 4; minH = 6; maxW = 12;
+                        } else if (widgetType === 'kanban-board') {
+                            minW = 3; minH = 6; maxW = 12; maxH = 20;
                         } else if (widgetType === 'gauge') {
                             minW = 2; minH = 4; maxW = 6; maxH = 10;
                         } else if (widgetType === 'project-list') {
@@ -232,7 +234,7 @@ export default function DraggableGrid({ data, isEditMode }: any) {
     }, [currentBreakpoint, processedLayouts, addWidgetWithLayout]);
 
     // LIBRARY onDrop
-    const handleDrop = (layout: any, layoutItem: any, _event: DragEvent) => {
+    const handleDrop = (layout: any, _layoutItem: any, _event: DragEvent) => {
         console.log('💥 LIBRARY DROP FIRED!');
 
         if (_event) {
@@ -254,6 +256,7 @@ export default function DraggableGrid({ data, isEditMode }: any) {
         let w = 4;
         let h = 4;
         if (widgetType === 'analytics') { w = 6; h = 6; }
+        if (widgetType === 'kanban-board') { w = 10; h = 8; }
         if (widgetType.startsWith('stat-')) { w = 3; h = 4; }
 
         const newWidget: WidgetType = {
