@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Dashboard } from '@/features/dashboard/Dashboard';
+import { TasksView } from '@/features/tasks/TasksView';
 import { useEffect } from 'react';
 import { useThemeStore } from '@/stores/theme';
 import { mockLogin } from '@/stores/auth';
@@ -41,7 +42,7 @@ function App() {
                 <MainLayout>
                     <Routes>
                         <Route path="/" element={<Dashboard />} />
-                        <Route path="/tasks" element={<ComingSoon title="Tasks" />} />
+                        <Route path="/tasks" element={<TasksView />} />
                         <Route path="/calendar" element={<ComingSoon title="Calendar" />} />
                         <Route path="/team" element={<ComingSoon title="Team" />} />
                         <Route path="/projects" element={<ComingSoon title="Projects" />} />
