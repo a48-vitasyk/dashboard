@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import { Column } from './types';
 import { TaskCard } from './TaskCard';
 import { Plus, MoreHorizontal, Circle, Clock, CheckCircle2 } from 'lucide-react';
@@ -6,6 +7,7 @@ import { cn } from '@/lib/utils';
 
 interface KanbanColumnProps {
     column: Column;
+    isDropDisabled?: boolean;
 }
 
 const COLUMN_ICONS: Record<string, any> = {
@@ -22,13 +24,15 @@ const COLUMN_ICON_COLORS: Record<string, string> = {
     for_review: 'text-blue-500',
 };
 
-export function KanbanColumn({ column }: KanbanColumnProps) {
+export function KanbanColumn({ column, isDropDisabled = false }: KanbanColumnProps) {
     const Icon = COLUMN_ICONS[column.id] || Circle;
 
     return (
-        <div className="flex flex-col bg-[#F8F9FA] dark:bg-slate-900/40 rounded-2xl p-3 min-w-[300px] max-w-[320px] shrink-0 h-full">
+        <div className="flex flex-col bg-[#F8F9FA] dark:bg-slate-900 rounded-2xl p-3 h-full">
+
             {/* Column Header */}
             <div className="flex items-center justify-between mb-4 px-1">
+                {/* ... existing header code ... */}
                 <div className="flex items-center gap-2">
                     <Icon className={cn("w-4 h-4", COLUMN_ICON_COLORS[column.id])} />
                     <h3 className="font-semibold text-sm text-slate-900 dark:text-white">
@@ -55,7 +59,7 @@ export function KanbanColumn({ column }: KanbanColumnProps) {
             </div>
 
             {/* Droppable Task List */}
-            <Droppable droppableId={column.id}>
+            <Droppable droppableId={column.id} isDropDisabled={isDropDisabled}>
                 {(provided, snapshot) => (
                     <div
                         ref={provided.innerRef}
@@ -67,19 +71,27 @@ export function KanbanColumn({ column }: KanbanColumnProps) {
                     >
                         {column.tasks.map((task, index) => (
                             <Draggable key={task.id} draggableId={task.id} index={index}>
-                                {(provided, snapshot) => (
-                                    <div
-                                        ref={provided.innerRef}
-                                        {...provided.draggableProps}
-                                        {...provided.dragHandleProps}
-                                        style={provided.draggableProps.style}
-                                        className={cn(
-                                            snapshot.isDragging && "opacity-50"
-                                        )}
-                                    >
-                                        <TaskCard task={task} index={index} />
-                                    </div>
-                                )}
+                                {(provided, snapshot) => {
+                                    const child = (
+                                        <div
+                                            ref={provided.innerRef}
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}
+                                            style={provided.draggableProps.style}
+                                            className={cn(
+                                                snapshot.isDragging && "opacity-100 ring-2 ring-emerald-500 shadow-xl z-50 rounded-xl mt-12 pointer-events-none"
+                                            )}
+                                        >
+                                            <TaskCard task={task} index={index} />
+                                        </div>
+                                    );
+
+                                    if (snapshot.isDragging) {
+                                        return createPortal(child, document.body);
+                                    }
+
+                                    return child;
+                                }}
                             </Draggable>
                         ))}
                         {provided.placeholder}
