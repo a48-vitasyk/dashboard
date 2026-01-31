@@ -6,9 +6,27 @@ import { useLayoutStore } from '@/stores/layout';
 import { cn } from '@/lib/utils';
 
 export function WidgetDrawer() {
-    const { isWidgetDrawerOpen, setWidgetDrawerOpen } = useLayoutStore();
+    const { isWidgetDrawerOpen, setWidgetDrawerOpen, setDraggingWidgetType } = useLayoutStore();
     const [searchQuery, setSearchQuery] = useState('');
     const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+        return () => setMounted(false);
+    }, []);
+
+    // ... (availableWidgets code remains same, assume it is unchanged in this context, 
+    // actually replace_file_content replaces block. I need to be careful not to delete availableWidgets definition if I select large block.
+    // I will target the hook destructuring and then the handleDragStart separately using multi_replace_file_content?
+    // Or just one replace for handleDragStart if I can easily find the hook line.
+
+    // I will do two replacements in one call with multi_replace_file_content.
+    // 1. Destructure setDraggingWidgetType
+    // 2. usage in handleDragStart
+
+    // But wait, replace_file_content is single block.
+    // I will use multi_replace_file_content.
+
 
     useEffect(() => {
         setMounted(true);
@@ -47,6 +65,9 @@ export function WidgetDrawer() {
 
     const handleDragStart = (e: React.DragEvent, type: string) => {
         console.log('🚀 DRAG START from drawer:', type);
+
+        // Update store with dragging type for Grid placeholder sizing
+        setDraggingWidgetType(type);
 
         // CRITICAL: Some browsers require text/plain to enable drag
         e.dataTransfer.setData("text/plain", "");

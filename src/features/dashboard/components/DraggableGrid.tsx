@@ -5,7 +5,7 @@ import 'react-resizable/css/styles.css';
 
 import { GripVertical, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useLayoutStore, breakpoints, cols, Widget as WidgetType } from '@/stores/layout';
+import { useLayoutStore, breakpoints, cols, Widget as WidgetType, WIDGET_SIZES } from '@/stores/layout';
 import { WidgetRegistry } from '@/components/widgets/WidgetRegistry';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -49,7 +49,7 @@ const GridWrapper = (props: any) => {
 
 
 export default function DraggableGrid({ data, isEditMode }: any) {
-    const { layouts, setLayouts, widgets, addWidgetWithLayout, removeWidget } = useLayoutStore();
+    const { layouts, setLayouts, widgets, addWidgetWithLayout, removeWidget, draggingWidgetType } = useLayoutStore();
     const isInitializedRef = useRef(false);
     const hasUserInteractedRef = useRef(false);
     const gridWrapperRef = useRef<HTMLDivElement>(null);
@@ -66,26 +66,11 @@ export default function DraggableGrid({ data, isEditMode }: any) {
                         const widgetType = widget?.type || '';
 
                         // Set min/max constraints based on widget type
-                        // Default template: minW = 2, minH = 4
-                        let minW = 2, maxW = 12, minH = 4, maxH = 20;
-
-                        if (widgetType === 'calendar') {
-                            minW = 2; minH = 4; maxH = 12;
-                        } else if (widgetType === 'analytics') {
-                            minW = 4; minH = 6; maxW = 12;
-                        } else if (widgetType === 'kanban-board') {
-                            minW = 3; minH = 6; maxW = 12; maxH = 20;
-                        } else if (widgetType === 'gauge') {
-                            minW = 2; minH = 4; maxW = 6; maxH = 10;
-                        } else if (widgetType === 'project-list') {
-                            minW = 2; minH = 4; maxW = 6;
-                        } else if (widgetType === 'time-tracker') {
-                            minW = 2; minH = 4; maxW = 6; maxH = 10;
-                        } else if (widgetType === 'reminders') {
-                            minW = 2; minH = 4; maxW = 6; maxH = 10;
-                        } else if (widgetType.startsWith('stat-')) {
-                            minW = 2; minH = 3; maxW = 4; maxH = 6;
-                        }
+                        const sizeConfig = WIDGET_SIZES[widgetType] || { minW: 2, minH: 4, maxW: 12, maxH: 20 };
+                        const minW = sizeConfig.minW;
+                        const maxW = sizeConfig.maxW || 12;
+                        const minH = sizeConfig.minH;
+                        const maxH = sizeConfig.maxH || 20;
 
                         return {
                             ...item,
@@ -202,8 +187,10 @@ export default function DraggableGrid({ data, isEditMode }: any) {
 
         let w = 4;
         let h = 4;
-        if (widgetType === 'analytics') { w = 6; h = 6; }
-        if (widgetType.startsWith('stat-')) { w = 3; h = 4; }
+        if (WIDGET_SIZES[widgetType]) {
+            w = WIDGET_SIZES[widgetType].w;
+            h = WIDGET_SIZES[widgetType].h;
+        }
 
         const newWidget: WidgetType = {
             id: newId,
@@ -255,9 +242,10 @@ export default function DraggableGrid({ data, isEditMode }: any) {
 
         let w = 4;
         let h = 4;
-        if (widgetType === 'analytics') { w = 6; h = 6; }
-        if (widgetType === 'kanban-board') { w = 10; h = 8; }
-        if (widgetType.startsWith('stat-')) { w = 3; h = 4; }
+        if (WIDGET_SIZES[widgetType]) {
+            w = WIDGET_SIZES[widgetType].w;
+            h = WIDGET_SIZES[widgetType].h;
+        }
 
         const newWidget: WidgetType = {
             id: newId,
@@ -361,8 +349,8 @@ export default function DraggableGrid({ data, isEditMode }: any) {
                 isResizable={isEditMode}
                 resizeHandles={['se']}
                 isDroppable={true}
-                compactType={null}
-                preventCollision={true}
+                compactType="vertical"
+                preventCollision={false}
                 margin={[24, 24]}
                 containerPadding={[0, 0]}
                 onLayoutChange={handleLayoutChange}
@@ -370,7 +358,11 @@ export default function DraggableGrid({ data, isEditMode }: any) {
                 onResizeStart={handleResizeStart}
                 onBreakpointChange={setCurrentBreakpoint}
                 onDrop={handleDrop}
-                droppingItem={{ i: "__dropping_elem__", w: 4, h: 4 }}
+                droppingItem={{
+                    i: "__dropping_elem__",
+                    w: draggingWidgetType && WIDGET_SIZES[draggingWidgetType] ? WIDGET_SIZES[draggingWidgetType].w : 4,
+                    h: draggingWidgetType && WIDGET_SIZES[draggingWidgetType] ? WIDGET_SIZES[draggingWidgetType].h : 4
+                }}
             >
                 {(widgets || []).map((widget) => {
                     let className = "";
