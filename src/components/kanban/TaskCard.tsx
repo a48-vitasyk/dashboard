@@ -6,9 +6,10 @@ import { motion } from 'framer-motion';
 interface TaskCardProps {
     task: Task;
     index: number;
+    onClick?: () => void;
 }
 
-export function TaskCard({ task, index }: TaskCardProps) {
+export function TaskCard({ task, index, onClick }: TaskCardProps) {
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -20,6 +21,7 @@ export function TaskCard({ task, index }: TaskCardProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
             whileHover={{ y: -2, transition: { duration: 0.2 } }}
+            onClick={onClick}
             className={cn(
                 "bg-white dark:bg-slate-800 rounded-xl shadow-sm p-4 cursor-grab active:cursor-grabbing border-t-4",
                 PRIORITY_COLORS[task.priority]

@@ -5,6 +5,8 @@ import {
     User,
     TeamMember,
 } from './types';
+import { mockKanbanTasks } from '@/components/kanban/mockData';
+import { Task } from '@/components/kanban/types';
 
 export class MockDatabaseService implements DatabaseService {
     private delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -95,5 +97,36 @@ export class MockDatabaseService implements DatabaseService {
                 status: 'In Progress',
             },
         ];
+    }
+
+    // Kanban Mock Implementation
+    async getTasks(): Promise<Task[]> {
+        await this.delay(400);
+        return [...mockKanbanTasks];
+    }
+
+    async createTask(task: Omit<Task, 'id'>): Promise<Task> {
+        await this.delay(500);
+        const newTask: Task = {
+            ...task,
+            id: Math.random().toString(36).substr(2, 9),
+        };
+        // In a real mock, we might want to push to the array, 
+        // but since we import it, we can't easily mutate the readonly import permanently.
+        // For now, we just return the new task simulating success.
+        return newTask;
+    }
+
+    async updateTask(id: string, updates: Partial<Task>): Promise<Task> {
+        await this.delay(300);
+        const task = mockKanbanTasks.find(t => t.id === id);
+        if (!task) throw new Error('Task not found');
+        return { ...task, ...updates };
+    }
+
+    async deleteTask(id: string): Promise<void> {
+        await this.delay(300);
+        // Simulate deletion
+        return;
     }
 }
